@@ -1,0 +1,72 @@
+modules = ["nodejs-24"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "artifacts/sanity-studio: Sanity Studio"
+
+[[workflows.workflow]]
+name = "artifacts/sanity-studio: Sanity Studio"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm --filter @workspace/sanity-studio run dev"
+waitForPort = 3000
+
+[agent]
+stack = "PNPM_WORKSPACE"
+expertMode = true
+integrations = ["github:1.0.0"]
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[[ports]]
+localPort = 3000
+externalPort = 3001
+
+[[ports]]
+localPort = 3333
+externalPort = 3002
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 80
+
+[[ports]]
+localPort = 21113
+externalPort = 3000
+
+[userenv]
+
+[userenv.shared]
+VITE_SANITY_PROJECT_ID = "gjqgjs7n"
+VITE_SANITY_DATASET = "production"
+SANITY_AUTH_TOKEN = "sk6nc2qZcgmGBhnP9Ix1LeoLch0GyqDNbhqG8GePxAYg2NQ5w8gpuQvhLmCg8YaMBTdYXXelhXMCt9uTy2GJ6L0TcTwIVYClsS1NojIF0dHfvFsbPDJT0zw7EYbYr6ouz9fRLJs44bGiLYxXL0vUoTEVRobsdeLJXkcFl8Xjb72HiBlPT4D6"
+
+[nix]
+channel = "stable-25_05"
