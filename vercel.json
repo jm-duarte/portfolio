@@ -1,6 +1,1 @@
-{
-  "installCommand": "npm install --include=dev",
-  "buildCommand": "npm run build:vercel",
-  "outputDirectory": "dist/public",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
+{}
