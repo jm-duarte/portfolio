@@ -1,6 +1,6 @@
 {
-  "buildCommand": "pnpm --filter @workspace/portfolio run build:vercel",
+  "installCommand": "cd artifacts/portfolio && npm install",
+  "buildCommand": "cd artifacts/portfolio && npm run build:vercel",
   "outputDirectory": "artifacts/portfolio/dist/public",
-  "installCommand": "pnpm install",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
