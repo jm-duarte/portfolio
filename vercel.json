@@ -1,6 +1,6 @@
 {
-  "installCommand": "cd artifacts/portfolio && npm install",
-  "buildCommand": "cd artifacts/portfolio && npm run build:vercel",
-  "outputDirectory": "artifacts/portfolio/dist/public",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "dist/public",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
