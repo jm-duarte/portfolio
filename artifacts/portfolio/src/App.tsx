@@ -3,10 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FaLinkedin } from "react-icons/fa";
 import { MdLockOutline, MdOutlineSend, MdArrowBack, MdKeyboardArrowDown } from "react-icons/md";
 import type { PortableTextBlock } from "@portabletext/types";
-import bgImage from "@/assets/bg.jpg";
 import { sanityClient } from "./sanity/client";
 import { projectsQuery, uxCasesQuery, aboutMeQuery, siteSettingsQuery } from "./sanity/queries";
 import { PortableTextRenderer } from "./sanity/portableText";
+
+const bgImage = "/bg.jpg";
 
 const greetings = ["Hi! I'm João", "Olá! Eu sou João", "¡Hola! Soy João", "Ciao! Sono João"];
 

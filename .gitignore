@@ -47,3 +47,7 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Large binary assets (not tracked in git — served from public/ or Sanity CDN)
+artifacts/portfolio/src/assets/
+attached_assets/
