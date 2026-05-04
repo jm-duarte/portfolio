@@ -574,12 +574,10 @@ function App() {
   ];
 
   return (
-    <div className="min-h-[100dvh] w-full py-12 px-4 sm:px-6 lg:px-8 overflow-x-hidden flex flex-col items-center">
-      {/* Fixed background — never shifts between pages */}
-      <div
-        className="fixed inset-0"
-        style={{ zIndex: -1, backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center", backgroundColor: "rgb(10, 5, 25)" }}
-      />
+    <div
+      className="min-h-[100dvh] w-full py-12 px-4 sm:px-6 lg:px-8 overflow-x-hidden flex flex-col items-center"
+      style={{ backgroundImage: `url(${bgImage})`, backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed", backgroundColor: "rgb(10, 5, 25)" }}
+    >
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
