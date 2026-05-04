@@ -1,14 +1,24 @@
 export const projectsQuery = `
   *[_type == "project" && published != false] | order(orderRank asc, _createdAt desc) {
     _id,
-    title,
+    "title": {
+      "en": coalesce(titleI18n.en, title, ""),
+      "pt": coalesce(titleI18n.pt, titleI18n.en, title, "")
+    },
     "slug": slug.current,
     tags,
     gradient,
-    role,
+    "role": {
+      "en": coalesce(roleI18n.en, role, ""),
+      "pt": coalesce(roleI18n.pt, roleI18n.en, role, "")
+    },
     year,
-    overview,
+    "overview": {
+      "en": coalesce(overviewI18n.en, overview, ""),
+      "pt": coalesce(overviewI18n.pt, overviewI18n.en, overview, "")
+    },
     content,
+    contentPt,
     "coverImageUrl": coverImage.asset->url,
   }
 `;
@@ -16,14 +26,24 @@ export const projectsQuery = `
 export const uxCasesQuery = `
   *[_type == "uxCase" && published != false] | order(orderRank asc, _createdAt desc) {
     _id,
-    title,
+    "title": {
+      "en": coalesce(titleI18n.en, title, ""),
+      "pt": coalesce(titleI18n.pt, titleI18n.en, title, "")
+    },
     "slug": slug.current,
     tags,
     gradient,
-    role,
+    "role": {
+      "en": coalesce(roleI18n.en, role, ""),
+      "pt": coalesce(roleI18n.pt, roleI18n.en, role, "")
+    },
     year,
-    overview,
+    "overview": {
+      "en": coalesce(overviewI18n.en, overview, ""),
+      "pt": coalesce(overviewI18n.pt, overviewI18n.en, overview, "")
+    },
     content,
+    contentPt,
     "coverImageUrl": coverImage.asset->url,
   }
 `;
@@ -31,11 +51,20 @@ export const uxCasesQuery = `
 export const aboutMeQuery = `
   *[_type == "aboutMe"][0] {
     name,
-    bio,
+    "bio": {
+      "en": coalesce(bioI18n.en, bio, ""),
+      "pt": coalesce(bioI18n.pt, bioI18n.en, bio, "")
+    },
     "avatarUrl": avatar.asset->url,
     skills,
     tools,
-    experience,
+    experience[] {
+      role,
+      company,
+      period,
+      description,
+      descriptionPt,
+    },
   }
 `;
 

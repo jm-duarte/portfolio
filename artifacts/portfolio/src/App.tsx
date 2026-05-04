@@ -13,6 +13,7 @@ const greetings = ["Hi! I'm João", "Olá! Eu sou João", "¡Hola! Soy João", "
 
 // ─── Translations ─────────────────────────────────────────────────────────────
 type Lang = "en" | "pt";
+type LocalizedString = { en: string; pt: string };
 
 const T = {
   en: {
@@ -150,27 +151,43 @@ function LangPill({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void })
   );
 }
 
+// ─── Localization helper ──────────────────────────────────────────────────────
+function loc(field: LocalizedString | undefined, lang: Lang, fallback = ""): string {
+  if (!field) return fallback;
+  return field[lang] || field.en || fallback;
+}
+
+function locContent(
+  content: PortableTextBlock[] | undefined,
+  contentPt: PortableTextBlock[] | undefined,
+  lang: Lang,
+): PortableTextBlock[] | undefined {
+  if (lang === "pt" && contentPt && contentPt.length > 0) return contentPt;
+  return content;
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Project {
   _id?: string;
-  title: string;
+  title: LocalizedString;
   slug?: string;
   tags: string[];
   gradient?: string;
   coverImageUrl?: string | null;
-  role: string;
+  role: LocalizedString;
   year: string;
-  overview: string;
+  overview: LocalizedString;
   content?: PortableTextBlock[];
+  contentPt?: PortableTextBlock[];
 }
 
 interface AboutData {
   name: string;
-  bio: string;
+  bio: LocalizedString;
   avatarUrl?: string | null;
   skills: string[];
   tools: string[];
-  experience: Array<{ role: string; company: string; period: string; description?: string }>;
+  experience: Array<{ role: string; company: string; period: string; description?: string; descriptionPt?: string }>;
 }
 
 // ─── Default fallback data (shown while Sanity is loading or unconfigured) ────
@@ -182,23 +199,25 @@ const DEFAULT_EXPERIENCE = [
   { role: "UI Designer", company: "Creative Studio", period: "2018 — 2020" },
 ];
 
+const ls = (en: string, pt = en): LocalizedString => ({ en, pt });
+
 const DEFAULT_PROJECTS: Project[] = [
-  { title: "E-learning Platform", tags: ["UI", "UX", "Research"], gradient: "from-purple-500 to-indigo-600", role: "Lead UI/UX Designer", year: "2023", overview: "A comprehensive redesign of an e-learning platform, focused on improving student engagement and course completion rates through intuitive navigation and personalized learning paths." },
-  { title: "UX for a Chrome Extension", tags: ["UI", "UX"], gradient: "from-blue-500 to-cyan-500", role: "Product Designer", year: "2023", overview: "Designed the full interface and interaction model for a productivity Chrome Extension, balancing a minimal footprint with powerful features accessible within a constrained popup environment." },
-  { title: "Diversa", tags: ["UI", "UX", "Research"], gradient: "from-fuchsia-600 to-purple-600", role: "UI/UX Designer", year: "2022", overview: "Diversa is an inclusive hiring platform built to reduce bias in recruitment. The design system and interface prioritize accessibility and diversity-first workflows." },
-  { title: "Plataforma Quan", tags: ["UI", "UX"], gradient: "from-slate-700 to-slate-900", role: "Product Designer", year: "2022", overview: "A B2B SaaS platform for financial data management. The challenge was translating complex financial workflows into a clean, actionable dashboard experience." },
-  { title: "OCE Play", tags: ["UI"], gradient: "from-emerald-400 to-teal-500", role: "UI Designer", year: "2023", overview: "A gamified learning app for children. The interface uses bright, accessible visuals and reward mechanics to keep young users engaged while meeting educational goals." },
-  { title: "TrekMine", tags: ["UI", "Research"], gradient: "from-teal-500 to-cyan-600", role: "UI/UX Designer", year: "2021", overview: "TrekMine is an outdoor adventure platform connecting hikers to trails and experiences. The design focused on clarity and speed of information retrieval in low-connectivity environments." },
-  { title: "Law Firm Website", tags: ["UI", "UX", "Webdesign"], gradient: "from-teal-800 to-emerald-900", role: "Web Designer", year: "2021", overview: "A full website redesign for a legal firm, shifting from a dated look to a modern, trust-building digital presence with clear service communication and lead generation flows." },
+  { title: ls("E-learning Platform"), tags: ["UI", "UX", "Research"], gradient: "from-purple-500 to-indigo-600", role: ls("Lead UI/UX Designer"), year: "2023", overview: ls("A comprehensive redesign of an e-learning platform, focused on improving student engagement and course completion rates through intuitive navigation and personalized learning paths.") },
+  { title: ls("UX for a Chrome Extension"), tags: ["UI", "UX"], gradient: "from-blue-500 to-cyan-500", role: ls("Product Designer"), year: "2023", overview: ls("Designed the full interface and interaction model for a productivity Chrome Extension, balancing a minimal footprint with powerful features accessible within a constrained popup environment.") },
+  { title: ls("Diversa"), tags: ["UI", "UX", "Research"], gradient: "from-fuchsia-600 to-purple-600", role: ls("UI/UX Designer"), year: "2022", overview: ls("Diversa is an inclusive hiring platform built to reduce bias in recruitment. The design system and interface prioritize accessibility and diversity-first workflows.") },
+  { title: ls("Plataforma Quan"), tags: ["UI", "UX"], gradient: "from-slate-700 to-slate-900", role: ls("Product Designer"), year: "2022", overview: ls("A B2B SaaS platform for financial data management. The challenge was translating complex financial workflows into a clean, actionable dashboard experience.") },
+  { title: ls("OCE Play"), tags: ["UI"], gradient: "from-emerald-400 to-teal-500", role: ls("UI Designer"), year: "2023", overview: ls("A gamified learning app for children. The interface uses bright, accessible visuals and reward mechanics to keep young users engaged while meeting educational goals.") },
+  { title: ls("TrekMine"), tags: ["UI", "Research"], gradient: "from-teal-500 to-cyan-600", role: ls("UI/UX Designer"), year: "2021", overview: ls("TrekMine is an outdoor adventure platform connecting hikers to trails and experiences. The design focused on clarity and speed of information retrieval in low-connectivity environments.") },
+  { title: ls("Law Firm Website"), tags: ["UI", "UX", "Webdesign"], gradient: "from-teal-800 to-emerald-900", role: ls("Web Designer"), year: "2021", overview: ls("A full website redesign for a legal firm, shifting from a dated look to a modern, trust-building digital presence with clear service communication and lead generation flows.") },
 ];
 
 const DEFAULT_UX_CASES: Project[] = [
-  { title: "E-learning Redesign — Full Process", tags: ["UX Research", "Usability Testing", "Prototyping"], gradient: "from-violet-600 to-purple-800", role: "Lead UX Researcher & Designer", year: "2023", overview: "A full end-to-end UX process for the e-learning platform redesign — from discovery and user interviews through to validated prototypes and handoff." },
-  { title: "Chrome Extension — End-to-End UX", tags: ["User Interviews", "Journey Mapping", "Wireframes"], gradient: "from-indigo-600 to-blue-700", role: "UX Designer", year: "2023", overview: "Conducted 12 user interviews to map the existing workflow, identified 3 critical friction points, and designed an interaction model that reduced task time by 40% in usability testing." },
-  { title: "Diversa — Inclusive Design System", tags: ["Accessibility", "UX Research", "Design System"], gradient: "from-fuchsia-600 to-rose-600", role: "Design Systems & UX Lead", year: "2022", overview: "Built an accessible, WCAG 2.1 AA-compliant design system from scratch. The process included stakeholder workshops, component audits, and ongoing usability testing with diverse user groups." },
-  { title: "Quan — Information Architecture", tags: ["Card Sorting", "IA", "Prototyping"], gradient: "from-purple-800 to-indigo-900", role: "UX Designer", year: "2022", overview: "Ran open and closed card sorting sessions with 24 participants to restructure the platform's IA. The new navigation reduced time-on-task by 35% and significantly improved first-click accuracy." },
-  { title: "OCE Play — Gamification UX", tags: ["Gamification", "User Testing", "UX Writing"], gradient: "from-emerald-600 to-teal-700", role: "UX Designer & Researcher", year: "2023", overview: "Researched gamification frameworks and validated reward mechanics through 5 rounds of playtest sessions with children aged 7–12 and their parents." },
-  { title: "TrekMine — Onboarding Flow", tags: ["Onboarding", "UX Research", "A/B Testing"], gradient: "from-teal-600 to-cyan-700", role: "UX Designer", year: "2021", overview: "Redesigned the onboarding flow after drop-off analysis revealed 60% of new users left before completing profile setup. A/B tested 3 variants, achieving a 45% improvement in completion." },
+  { title: ls("E-learning Redesign — Full Process"), tags: ["UX Research", "Usability Testing", "Prototyping"], gradient: "from-violet-600 to-purple-800", role: ls("Lead UX Researcher & Designer"), year: "2023", overview: ls("A full end-to-end UX process for the e-learning platform redesign — from discovery and user interviews through to validated prototypes and handoff.") },
+  { title: ls("Chrome Extension — End-to-End UX"), tags: ["User Interviews", "Journey Mapping", "Wireframes"], gradient: "from-indigo-600 to-blue-700", role: ls("UX Designer"), year: "2023", overview: ls("Conducted 12 user interviews to map the existing workflow, identified 3 critical friction points, and designed an interaction model that reduced task time by 40% in usability testing.") },
+  { title: ls("Diversa — Inclusive Design System"), tags: ["Accessibility", "UX Research", "Design System"], gradient: "from-fuchsia-600 to-rose-600", role: ls("Design Systems & UX Lead"), year: "2022", overview: ls("Built an accessible, WCAG 2.1 AA-compliant design system from scratch. The process included stakeholder workshops, component audits, and ongoing usability testing with diverse user groups.") },
+  { title: ls("Quan — Information Architecture"), tags: ["Card Sorting", "IA", "Prototyping"], gradient: "from-purple-800 to-indigo-900", role: ls("UX Designer"), year: "2022", overview: ls("Ran open and closed card sorting sessions with 24 participants to restructure the platform's IA. The new navigation reduced time-on-task by 35% and significantly improved first-click accuracy.") },
+  { title: ls("OCE Play — Gamification UX"), tags: ["Gamification", "User Testing", "UX Writing"], gradient: "from-emerald-600 to-teal-700", role: ls("UX Designer & Researcher"), year: "2023", overview: ls("Researched gamification frameworks and validated reward mechanics through 5 rounds of playtest sessions with children aged 7–12 and their parents.") },
+  { title: ls("TrekMine — Onboarding Flow"), tags: ["Onboarding", "UX Research", "A/B Testing"], gradient: "from-teal-600 to-cyan-700", role: ls("UX Designer"), year: "2021", overview: ls("Redesigned the onboarding flow after drop-off analysis revealed 60% of new users left before completing profile setup. A/B tested 3 variants, achieving a 45% improvement in completion.") },
 ];
 
 type Page = "home" | "ux-cases" | "about";
@@ -261,7 +280,7 @@ function ImagePlaceholder({ gradient, tall = false }: { gradient?: string; tall?
 }
 
 // ─── Related card ─────────────────────────────────────────────────────────────
-function RelatedCard({ project, onClick }: { project: Project; onClick: () => void }) {
+function RelatedCard({ project, onClick, lang }: { project: Project; onClick: () => void; lang: Lang }) {
   const grad = project.gradient ?? FALLBACK_GRADIENT;
   return (
     <motion.button
@@ -273,7 +292,7 @@ function RelatedCard({ project, onClick }: { project: Project; onClick: () => vo
         project={project}
         className={`h-40 w-full rounded-xl flex items-center justify-center p-4 transition-shadow duration-300 group-hover:shadow-xl ${!project.coverImageUrl ? `bg-gradient-to-br ${grad}` : ""}`}
       >
-        <span className="relative z-10 text-white font-semibold text-base text-center drop-shadow">{project.title}</span>
+        <span className="relative z-10 text-white font-semibold text-base text-center drop-shadow">{loc(project.title, lang)}</span>
         <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
       </CoverBg>
       <div className="flex flex-wrap gap-1.5">
@@ -301,8 +320,12 @@ function DetailPage({
 }) {
   const t = T[lang];
   const { project, category } = detail;
-  const related = pool.filter((p) => p.title !== project.title).slice(0, 3);
+  const related = pool.filter((p) => (p._id ?? p.title.en) !== (project._id ?? project.title.en)).slice(0, 3);
   const grad = project.gradient ?? FALLBACK_GRADIENT;
+  const displayTitle = loc(project.title, lang);
+  const displayRole = loc(project.role, lang);
+  const displayOverview = loc(project.overview, lang);
+  const displayContent = locContent(project.content, project.contentPt, lang);
 
   const contentSections = [
     { label: t.contentOverviewLabel, text: t.contentOverviewText },
@@ -310,11 +333,11 @@ function DetailPage({
     { label: t.contentOutcomeLabel, text: t.contentOutcomeText },
   ];
 
-  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [project.title]);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [project._id, project.title.en]);
 
   return (
     <motion.div
-      key={project.title}
+      key={project._id ?? project.title.en}
       variants={pageVariants}
       initial="initial"
       animate="animate"
@@ -346,7 +369,7 @@ function DetailPage({
                 <span key={tag} className="text-xs font-medium bg-white/20 text-white rounded-full px-3 py-1 backdrop-blur-sm">{tag}</span>
               ))}
             </div>
-            <h1 className="text-2xl md:text-4xl font-extrabold text-white drop-shadow">{project.title}</h1>
+            <h1 className="text-2xl md:text-4xl font-extrabold text-white drop-shadow">{displayTitle}</h1>
           </div>
         </div>
       ) : (
@@ -358,7 +381,7 @@ function DetailPage({
                 <span key={tag} className="text-xs font-medium bg-white/20 text-white rounded-full px-3 py-1 backdrop-blur-sm">{tag}</span>
               ))}
             </div>
-            <h1 className="text-2xl md:text-4xl font-extrabold text-white drop-shadow">{project.title}</h1>
+            <h1 className="text-2xl md:text-4xl font-extrabold text-white drop-shadow">{displayTitle}</h1>
           </div>
         </div>
       )}
@@ -367,7 +390,7 @@ function DetailPage({
       <div className="mx-8 mt-6 flex flex-wrap gap-6 border-b border-white/10 pb-6">
         <div>
           <p className="text-white/40 text-xs uppercase tracking-widest mb-1">{t.metaRole}</p>
-          <p className="text-white text-sm font-medium">{project.role}</p>
+          <p className="text-white text-sm font-medium">{displayRole}</p>
         </div>
         <div>
           <p className="text-white/40 text-xs uppercase tracking-widest mb-1">{t.metaYear}</p>
@@ -381,13 +404,13 @@ function DetailPage({
 
       {/* Overview */}
       <div className="mx-8 mt-8">
-        <p className="text-white/80 text-base leading-relaxed">{project.overview}</p>
+        <p className="text-white/80 text-base leading-relaxed">{displayOverview}</p>
       </div>
 
       {/* Content — Portable Text when available, placeholder sections as fallback */}
-      {project.content && project.content.length > 0 ? (
+      {displayContent && displayContent.length > 0 ? (
         <div className="mx-8 mt-10 pb-2">
-          <PortableTextRenderer content={project.content} />
+          <PortableTextRenderer content={displayContent} />
         </div>
       ) : (
         <div className="mx-8 mt-10 flex flex-col gap-12">
@@ -412,7 +435,7 @@ function DetailPage({
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {related.map((p) => (
-              <RelatedCard key={p.title} project={p} onClick={() => onSelectRelated(p)} />
+              <RelatedCard key={p._id ?? p.title.en} project={p} onClick={() => onSelectRelated(p)} lang={lang} />
             ))}
           </div>
         </div>
@@ -422,11 +445,13 @@ function DetailPage({
 }
 
 // ─── Grid card ────────────────────────────────────────────────────────────────
-function GridCard({ project, index, onClick }: { project: Project; index: number; onClick: () => void }) {
+function GridCard({ project, index, onClick, lang }: { project: Project; index: number; onClick: () => void; lang: Lang }) {
   const grad = project.gradient ?? FALLBACK_GRADIENT;
+  const displayTitle = loc(project.title, lang);
+  const displayOverview = loc(project.overview, lang);
   return (
     <motion.article
-      key={project.title}
+      key={project._id ?? project.title.en}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
@@ -444,9 +469,9 @@ function GridCard({ project, index, onClick }: { project: Project; index: number
           <div className="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="relative z-10">
-              <h3 className="text-white font-bold text-lg leading-tight mb-1">{project.title}</h3>
-              {project.overview && (
-                <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{project.overview}</p>
+              <h3 className="text-white font-bold text-lg leading-tight mb-1">{displayTitle}</h3>
+              {displayOverview && (
+                <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{displayOverview}</p>
               )}
             </div>
           </div>
@@ -457,9 +482,9 @@ function GridCard({ project, index, onClick }: { project: Project; index: number
           <div className="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="relative z-10">
-              <h3 className="text-white font-bold text-lg leading-tight mb-1">{project.title}</h3>
-              {project.overview && (
-                <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{project.overview}</p>
+              <h3 className="text-white font-bold text-lg leading-tight mb-1">{displayTitle}</h3>
+              {displayOverview && (
+                <p className="text-white/70 text-xs leading-relaxed line-clamp-2">{displayOverview}</p>
               )}
             </div>
           </div>
@@ -471,7 +496,7 @@ function GridCard({ project, index, onClick }: { project: Project; index: number
             <span key={tag} className="text-xs font-medium bg-white/15 text-white/80 rounded-full px-3 py-1">{tag}</span>
           ))}
         </div>
-        <h4 className="font-semibold text-lg text-white text-center">{project.title}</h4>
+        <h4 className="font-semibold text-lg text-white text-center">{displayTitle}</h4>
       </div>
     </motion.article>
   );
@@ -644,7 +669,7 @@ function App() {
           {/* ── Detail view ── */}
           {detailView && (
             <DetailPage
-              key={`detail-${detailView.project.title}`}
+              key={`detail-${detailView.project._id ?? detailView.project.title.en}`}
               detail={detailView}
               pool={detailView.category === "project" ? projectsData : uxCasesData}
               onBack={closeDetail}
@@ -668,7 +693,7 @@ function App() {
                 <h2 className="text-2xl font-bold text-white mb-8 text-left">{t.myProjects}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                   {projectsData.map((project, index) => (
-                    <GridCard key={project._id ?? project.title} project={project} index={index} onClick={() => openDetail(project, "project")} />
+                    <GridCard key={project._id ?? project.title.en} project={project} index={index} onClick={() => openDetail(project, "project")} lang={lang} />
                   ))}
                 </div>
               </section>
@@ -743,7 +768,7 @@ function App() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         {uxCasesData.map((project, index) => (
-                          <GridCard key={project._id ?? project.title} project={project} index={index} onClick={() => openDetail(project, "ux-case")} />
+                          <GridCard key={project._id ?? project.title.en} project={project} index={index} onClick={() => openDetail(project, "ux-case")} lang={lang} />
                         ))}
                       </div>
                     </motion.div>
@@ -778,7 +803,7 @@ function App() {
                   <div className="flex flex-col gap-3 text-center md:text-left">
                     <h2 className="text-2xl font-bold text-white">{aboutData?.name ?? "João"}</h2>
                     <p className="text-white/70 leading-relaxed">
-                      {aboutData?.bio || t.defaultBio}
+                      {aboutData ? (loc(aboutData.bio, lang) || t.defaultBio) : t.defaultBio}
                     </p>
                   </div>
                 </div>

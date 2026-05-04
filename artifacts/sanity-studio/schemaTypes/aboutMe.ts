@@ -11,10 +11,22 @@ export default defineType({
       type: "string",
     }),
     defineField({
-      name: "bio",
+      name: "bioI18n",
       title: "Bio",
+      type: "object",
+      description: "Short biography in English and Portuguese",
+      fields: [
+        defineField({ name: "en", title: "English", type: "text", rows: 5 }),
+        defineField({ name: "pt", title: "Português", type: "text", rows: 5 }),
+      ],
+    }),
+    defineField({
+      name: "bio",
+      title: "Bio (legacy — use field above)",
       type: "text",
       rows: 5,
+      description: "Kept for backwards compatibility. Prefer 'Bio (EN/PT)' above.",
+      hidden: ({ document }) => !!(document?.bioI18n as { en?: string } | undefined)?.en,
     }),
     defineField({
       name: "avatar",
@@ -48,7 +60,8 @@ export default defineType({
             defineField({ name: "company", title: "Company", type: "string" }),
             defineField({ name: "role", title: "Role", type: "string" }),
             defineField({ name: "period", title: "Period (e.g. 2022 – 2024)", type: "string" }),
-            defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
+            defineField({ name: "description", title: "Description (English)", type: "text", rows: 3 }),
+            defineField({ name: "descriptionPt", title: "Description (Português)", type: "text", rows: 3 }),
           ],
           preview: {
             select: { title: "role", subtitle: "company" },
