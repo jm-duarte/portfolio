@@ -337,9 +337,23 @@ html, body, #root {
 }
 
 body {
+  background-color: rgb(10, 5, 25);
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   background-image: url('/bg.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   background-color: rgb(10, 5, 25);
+  pointer-events: none;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
