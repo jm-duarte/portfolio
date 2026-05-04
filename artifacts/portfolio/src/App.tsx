@@ -36,7 +36,7 @@ const T = {
     metaRole: "Role",
     metaYear: "Year",
     metaType: "Type",
-    typeProject: "UI/UX Project",
+    typeProject: "UI/UX",
     typeUxCase: "UX Case Study",
     contentOverviewLabel: "Overview",
     contentOverviewText: "This section will contain a detailed description of the project context, goals, and constraints. Add your own copy and images here.",
@@ -69,7 +69,7 @@ const T = {
     metaRole: "Função",
     metaYear: "Ano",
     metaType: "Tipo",
-    typeProject: "Projeto UI/UX",
+    typeProject: "UI/UX",
     typeUxCase: "Case de UX",
     contentOverviewLabel: "Visão Geral",
     contentOverviewText: "Esta seção conterá uma descrição detalhada do contexto, objetivos e restrições do projeto. Adicione seu próprio texto e imagens aqui.",
@@ -465,7 +465,7 @@ function GridCard({ project, index, onClick, lang }: { project: Project; index: 
           className="h-[260px] w-full rounded-2xl shadow-sm group-hover:shadow-xl transition-all duration-300 relative overflow-hidden"
           style={{ backgroundImage: `url(${project.coverImageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }}
         >
-          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-300" />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
           <div className="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="relative z-10">
@@ -492,7 +492,7 @@ function GridCard({ project, index, onClick, lang }: { project: Project; index: 
       )}
       <div className="flex flex-col items-center gap-3">
         <div className="flex flex-wrap justify-center gap-2">
-          {project.tags.map((tag) => (
+          {(project.tags ?? []).map((tag) => (
             <span key={tag} className="text-xs font-medium bg-white/15 text-white/80 rounded-full px-3 py-1">{tag}</span>
           ))}
         </div>
@@ -500,6 +500,21 @@ function GridCard({ project, index, onClick, lang }: { project: Project; index: 
       </div>
     </motion.article>
   );
+}
+
+// ─── URL helpers ──────────────────────────────────────────────────────────────
+function updateUrlParams(updates: Record<string, string | null>) {
+  const params = new URLSearchParams(window.location.search);
+  for (const [key, value] of Object.entries(updates)) {
+    if (value === null) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+  }
+  const search = params.toString();
+  const newUrl = search ? `${window.location.pathname}?${search}` : window.location.pathname;
+  history.replaceState(null, "", newUrl);
 }
 
 // ─── App ──────────────────────────────────────────────────────────────────────
@@ -517,9 +532,13 @@ function App() {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
   const [sanityReady, setSanityReady] = useState(false);
   const [lang, setLangState] = useState<Lang>(() => {
+    // 1. URL param takes highest priority (enables shareable ?lang=pt links)
+    const urlLang = new URLSearchParams(window.location.search).get("lang");
+    if (urlLang === "pt" || urlLang === "en") return urlLang;
+    // 2. localStorage persisted preference
     const stored = localStorage.getItem("portfolio_lang");
     if (stored === "pt" || stored === "en") return stored;
-    // Auto-detect from device/browser language — default to English unless pt-BR / pt
+    // 3. Auto-detect from device/browser language — default to English unless pt-BR / pt
     const deviceLang = navigator.language || (navigator.languages?.[0] ?? "en");
     return deviceLang.toLowerCase().startsWith("pt") ? "pt" : "en";
   });
@@ -527,6 +546,7 @@ function App() {
   const setLang = (l: Lang) => {
     setLangState(l);
     localStorage.setItem("portfolio_lang", l);
+    updateUrlParams({ lang: l });
   };
 
   const t = T[lang];
@@ -588,9 +608,49 @@ function App() {
   const openDetail = (project: Project, category: Category) => {
     setDetailView({ project, category });
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (project.slug) {
+      const paramKey = category === "project" ? "project" : "case";
+      updateUrlParams({
+        project: null,
+        case: null,
+        [paramKey]: project.slug,
+      });
+    }
   };
 
-  const closeDetail = () => setDetailView(null);
+  const closeDetail = () => {
+    setDetailView(null);
+    updateUrlParams({ project: null, case: null });
+  };
+
+  // ─── Auto-open project/case from URL slug (runs once after Sanity loads) ──
+  const didAutoOpen = useRef(false);
+  useEffect(() => {
+    if (!sanityReady || didAutoOpen.current) return;
+    didAutoOpen.current = true;
+    const params = new URLSearchParams(window.location.search);
+    const projectSlug = params.get("project");
+    const caseSlug = params.get("case");
+    if (projectSlug) {
+      const found = projectsData.find((p) => p.slug === projectSlug);
+      if (found) {
+        setCurrentPage("home");
+        setDetailView({ project: found, category: "project" });
+      } else {
+        // Slug not found — remove stale param to avoid dead links
+        updateUrlParams({ project: null });
+      }
+    } else if (caseSlug) {
+      const found = uxCasesData.find((p) => p.slug === caseSlug);
+      if (found) {
+        setCurrentPage("ux-cases");
+        setDetailView({ project: found, category: "ux-case" });
+      } else {
+        // Slug not found — remove stale param to avoid dead links
+        updateUrlParams({ case: null });
+      }
+    }
+  }, [sanityReady, projectsData, uxCasesData]);
 
   const navLinks: { label: string; page: Page }[] = [
     { label: t.navHome, page: "home" },
@@ -613,7 +673,7 @@ function App() {
               {navLinks.map(({ label, page }) => (
                 <button
                   key={page}
-                  onClick={() => { setCurrentPage(page); setDetailView(null); }}
+                  onClick={() => { setCurrentPage(page); closeDetail(); }}
                   className={`font-medium transition-colors ${currentPage === page && !detailView ? "text-white" : "text-white/50 hover:text-white/80"}`}
                   style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                 >
