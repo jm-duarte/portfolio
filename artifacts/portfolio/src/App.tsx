@@ -105,14 +105,12 @@ function LangPill({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void })
 
   return (
     <div ref={ref} className="relative">
-      <div className="nav-wrapper">
-        <div className="glass-nav flex items-center gap-2 px-6 py-3 cursor-pointer" style={{ fontSize: "18px" }} onClick={() => setOpen((v) => !v)}>
-          <span className="font-medium text-white">{active.code}</span>
-          <MdKeyboardArrowDown
-            size={18}
-            className={`text-white/50 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"}`}
-          />
-        </div>
+      <div className="glass-pill flex items-center gap-2 px-6 py-3 cursor-pointer" style={{ fontSize: "18px" }} onClick={() => setOpen((v) => !v)}>
+        <span className="relative z-10 font-medium text-white">{active.code}</span>
+        <MdKeyboardArrowDown
+          size={18}
+          className={`relative z-10 text-white/50 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"}`}
+        />
       </div>
 
       <AnimatePresence>
@@ -675,23 +673,21 @@ function App() {
         className="flex flex-col items-center mb-10 w-full max-w-[900px]"
       >
         <div className="flex items-center gap-3 mb-10">
-          <div className="nav-wrapper">
-            <nav className="glass-nav text-white px-6 py-3 flex items-center gap-6">
+          <nav className="glass-pill text-white px-6 py-3 flex items-center gap-6">
               {navLinks.map(({ label, page }) => (
                 <button
                   key={page}
                   onClick={() => { setCurrentPage(page); closeDetail(); }}
-                  className={`font-medium transition-colors ${currentPage === page && !detailView ? "text-white" : "text-white/50 hover:text-white/80"}`}
+                  className={`relative z-10 font-medium transition-colors ${currentPage === page && !detailView ? "text-white" : "text-white/50 hover:text-white/80"}`}
                   style={{ fontSize: "18px", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                 >
                   {label}
                 </button>
               ))}
-              <a href="https://www.linkedin.com/in/joaomduarte/" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/in/joaomduarte/" target="_blank" rel="noopener noreferrer" className="relative z-10 text-white/50 hover:text-white transition-colors" aria-label="LinkedIn">
                 <FaLinkedin size={18} />
               </a>
-            </nav>
-          </div>
+          </nav>
           <div className="hidden md:block">
             <LangPill lang={lang} setLang={setLang} />
           </div>

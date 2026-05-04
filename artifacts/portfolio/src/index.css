@@ -191,20 +191,6 @@
   }
 }
 
-@property --nav-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: true;
-}
-
-:root {
-  animation: spin-border 2.5s linear infinite;
-}
-
-@keyframes spin-border {
-  to { --nav-angle: 360deg; }
-}
-
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   15%       { transform: translateX(-6px); }
@@ -219,36 +205,36 @@
   animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-.nav-wrapper {
+/* Pill — same glass background as .glass-card, with centre-burst hover glow */
+.glass-pill {
   position: relative;
   border-radius: 9999px;
+  backdrop-filter: blur(40px) saturate(220%) brightness(0.85);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(0.85);
+  background: rgba(90, 30, 180, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   overflow: hidden;
-  padding: 2px;
-  box-shadow: 0 0 22px rgba(168, 85, 247, 0.45), 0 0 44px rgba(124, 58, 237, 0.2);
+  transition: box-shadow 0.3s ease;
 }
 
-.nav-wrapper::before {
+.glass-pill::before {
   content: '';
   position: absolute;
-  inset: -150%;
-  background: conic-gradient(
-    from var(--nav-angle),
-    #7c3aed 0%,
-    #a855f7 20%,
-    #ec4899 40%,
-    #c026d3 60%,
-    #7c3aed 80%,
-    #a855f7 100%
+  inset: -1px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(168, 85, 247, 0.5),
+    transparent 70%
   );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.glass-nav {
-  position: relative;
-  z-index: 1;
-  border-radius: 9999px;
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  background: rgba(10, 5, 25, 0.82);
+.glass-pill:hover::before {
+  opacity: 1;
 }
 
 .card-glow-wrapper {
