@@ -187,13 +187,13 @@ interface AboutData {
   avatarUrl?: string | null;
   skills: string[];
   tools: string[];
-  experience: Array<{ role: string; company: string; period: string; description?: string; descriptionPt?: string }>;
+  experience: Array<{ role: string; company: string; period: string; description?: string; descriptionPt?: string; }>;
 }
 
 // ─── Default fallback data (shown while Sanity is loading or unconfigured) ────
 const DEFAULT_SKILLS = ["User Research", "Wireframing", "Prototyping", "Usability Testing", "Design Systems", "Interaction Design", "Visual Design", "Information Architecture"];
 const DEFAULT_TOOLS = ["Figma", "Maze", "Hotjar", "Notion", "Miro", "Principle", "Zeplin", "Lottie"];
-const DEFAULT_EXPERIENCE = [
+const DEFAULT_EXPERIENCE: Array<{ role: string; company: string; period: string; description?: string; descriptionPt?: string }> = [
   { role: "Senior UI/UX Designer", company: "Digital Agency", period: "2022 — Present" },
   { role: "Product Designer", company: "SaaS Startup", period: "2020 — 2022" },
   { role: "UI Designer", company: "Creative Studio", period: "2018 — 2020" },
