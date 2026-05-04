@@ -341,19 +341,9 @@ body {
   position: relative;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-image: url('/bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-color: rgb(10, 5, 25);
-  pointer-events: none;
-}
+/* Background is injected as a React div inside #root so it shares
+   the same compositing context as .glass-card, letting backdrop-filter work. */
 
 #root {
   position: relative;
-  z-index: 1;
 }
