@@ -283,7 +283,7 @@
   z-index: 1;
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
-  background: rgba(60, 20, 100, 0.62);
+  background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
@@ -334,4 +334,12 @@
 
 html, body, #root {
   overflow-x: hidden;
+}
+
+body {
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-color: rgb(10, 5, 25);
 }
