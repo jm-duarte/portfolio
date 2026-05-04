@@ -281,9 +281,9 @@
 .glass-card {
   position: relative;
   z-index: 1;
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(40px) saturate(220%) brightness(0.85);
+  -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(0.85);
+  background: rgba(90, 30, 180, 0.38);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
