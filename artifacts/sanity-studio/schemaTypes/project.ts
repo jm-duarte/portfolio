@@ -62,7 +62,11 @@ export default defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96 },
+      options: {
+        source: (doc: Record<string, unknown>) =>
+          ((doc.titleI18n as { en?: string } | undefined)?.en ?? (doc.title as string | undefined) ?? ""),
+        maxLength: 96,
+      },
       validation: (Rule) => Rule.required(),
     }),
     defineField({

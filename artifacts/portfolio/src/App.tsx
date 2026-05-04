@@ -829,15 +829,21 @@ function App() {
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4">{t.experience}</h3>
                   <div className="flex flex-col gap-5">
-                    {(aboutData?.experience?.length ? aboutData.experience : DEFAULT_EXPERIENCE).map((exp, i) => (
-                      <div key={`${exp.role}-${i}`} className="flex flex-col md:flex-row md:items-center justify-between gap-1 border-b border-white/10 pb-4">
-                        <div>
-                          <p className="font-semibold text-white">{exp.role}</p>
-                          <p className="text-white/50 text-sm">{exp.company}</p>
+                    {(aboutData?.experience?.length ? aboutData.experience : DEFAULT_EXPERIENCE).map((exp, i) => {
+                      const expDesc = lang === "pt" ? (exp.descriptionPt || exp.description) : exp.description;
+                      return (
+                        <div key={`${exp.role}-${i}`} className="flex flex-col gap-1 border-b border-white/10 pb-4">
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
+                            <div>
+                              <p className="font-semibold text-white">{exp.role}</p>
+                              <p className="text-white/50 text-sm">{exp.company}</p>
+                            </div>
+                            <span className="text-white/40 text-sm shrink-0">{exp.period}</span>
+                          </div>
+                          {expDesc && <p className="text-white/60 text-sm leading-relaxed mt-1">{expDesc}</p>}
                         </div>
-                        <span className="text-white/40 text-sm shrink-0">{exp.period}</span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </section>
